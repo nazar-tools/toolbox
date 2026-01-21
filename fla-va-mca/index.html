@@ -253,7 +253,7 @@
 
 <script>
   "use strict";
-  
+
   const el = (id) => document.getElementById(id);
 
   const voltageEl = el("voltage");
@@ -290,20 +290,17 @@
 
   let lastEdited = null;
 
-  function nowTimeStr() {
-    const d = new Date();
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-
   function setInvalid(inputEl, helpEl, isBad, msg) {
     if (inputEl) inputEl.classList.toggle("invalid", !!isBad);
     if (helpEl && typeof msg === "string") {
       if (isBad) {
         helpEl.classList.add("helpDanger");
         helpEl.classList.remove("help");
+        helpEl.classList.remove("helpWarn");
         helpEl.textContent = msg;
       } else {
         helpEl.classList.remove("helpDanger");
+        helpEl.classList.remove("helpWarn");
         helpEl.classList.add("help");
       }
     }
@@ -332,16 +329,15 @@
 
   function validatePhaseVoltage(V, phase) {
     // Returns: { level: "ok"|"warn"|"bad", message: string, flagVoltage: bool, flagPhase: bool }
-    
+
     if (!Number.isFinite(V) || V <= 0) {
       return { level: "ok", message: "", flagVoltage: false, flagPhase: false };
     }
-  
+
     const V1_typ = [120, 208, 240, 277, 480];         // common 1Ø
     const V3_typ = [208, 240, 400, 480, 600];         // common 3Ø (LL)
-  
+
     if (phase === 1) {
-      // Flag very odd values (too low/high) + non-typical values
       if (V < 90 || V > 700) {
         return {
           level: "warn",
@@ -350,10 +346,8 @@
           flagPhase: false
         };
       }
-  
+
       if (!nearAny(V, V1_typ, 0.03)) {
-        // Not typical, but possible
-        // Also special-case: 3Ø-typical but entered as 1Ø might be fine (208/480 still ok)
         return {
           level: "warn",
           message: `1Ø at ${V}V is unusual. Common 1Ø values are 120, 208, 240, 277, 480. If this is a 3Ø system, confirm whether you meant line-to-line.`,
@@ -361,12 +355,11 @@
           flagPhase: false
         };
       }
-  
+
       return { level: "ok", message: "", flagVoltage: false, flagPhase: false };
     }
-  
-    // phase === 3
-    // In your tool, 3Ø assumes V is line-to-line. So 120V 3Ø would be suspicious.
+
+    // phase === 3 (assumes line-to-line voltage)
     if (nearAny(V, [120, 277], 0.03)) {
       return {
         level: "bad",
@@ -375,7 +368,7 @@
         flagPhase: true
       };
     }
-  
+
     if (V < 180 || V > 700) {
       return {
         level: "warn",
@@ -384,7 +377,7 @@
         flagPhase: false
       };
     }
-  
+
     if (!nearAny(V, V3_typ, 0.03)) {
       return {
         level: "warn",
@@ -393,10 +386,10 @@
         flagPhase: false
       };
     }
-  
+
     return { level: "ok", message: "", flagVoltage: false, flagPhase: false };
   }
-  
+
   function clearBadges() {
     flaBadge.style.display = "none";
     vaBadge.style.display = "none";
@@ -497,10 +490,10 @@
     const { V, phase, VA, FLA, kW, PF, eff, factor } = state;
     const voltageHelp = el("voltageHelp");
     const phaseHelp = el("phaseHelp");
-    
-    // Reset all invalid flags
-    voltageEl.classList.remove("invalid");
-    phaseEl.classList.remove("invalid");
+
+    // Reset all validation UI states
+    voltageEl.classList.remove("invalid", "warn");
+    phaseEl.classList.remove("invalid", "warn");
     pfEl.classList.remove("invalid");
     effEl.classList.remove("invalid");
     factorEl.classList.remove("invalid");
@@ -512,6 +505,9 @@
     effHelp.textContent = "Optional. If used, treat kW as output power. Typical range: 0–1.";
     factorHelp.className = "help";
     factorHelp.textContent = "Used for MCA ↔ FLA (MCA = Factor × FLA).";
+
+    if (voltageHelp) { voltageHelp.className = "help"; voltageHelp.textContent = ""; }
+    if (phaseHelp) { phaseHelp.className = "help"; phaseHelp.textContent = ""; }
 
     // Factor must be > 0 if used
     if (Number.isFinite(factor) && factor <= 0) {
@@ -536,45 +532,38 @@
       setInvalid(effEl, effHelp, true, "Efficiency should be between 0 and 1 (or leave blank).");
     }
 
-    // Voltage validation: only flag if required to solve and missing
-    // If VA+V needed to compute current, or FLA+V needed to compute VA
+    // Voltage required check (missing V when needed is an ERROR)
     const needsV =
       (Number.isFinite(VA) && !Number.isFinite(FLA)) ||
       (Number.isFinite(FLA) && !Number.isFinite(VA)) ||
-      (kwEntered); // kW path will end up needing V to compute current if user wants FLA
+      (kwEntered);
 
     if (needsV && !(Number.isFinite(V) && V > 0)) {
       voltageEl.classList.add("invalid");
     }
 
-    // Reset voltage/phase help
-    if (voltageHelp) { voltageHelp.className = "help"; voltageHelp.textContent = ""; }
-    if (phaseHelp) { phaseHelp.className = "help"; phaseHelp.textContent = ""; }
-    
+    // Voltage/phase sanity check (warn vs bad)
     const pv = validatePhaseVoltage(V, phase);
     if (pv.level !== "ok") {
+      const isBad = pv.level === "bad";
+
       if (pv.flagVoltage) {
-        voltageEl.classList.add("invalid");
+        voltageEl.classList.add(isBad ? "invalid" : "warn");
         if (voltageHelp) {
-          voltageHelp.className = "helpDanger";
+          voltageHelp.className = isBad ? "helpDanger" : "helpWarn";
           voltageHelp.textContent = pv.message;
         }
-      } else if (voltageHelp) {
-        voltageHelp.className = "help";
-        voltageHelp.textContent = pv.message;
       }
-    
+
       if (pv.flagPhase) {
-        phaseEl.classList.add("invalid");
+        phaseEl.classList.add(isBad ? "invalid" : "warn");
         if (phaseHelp) {
-          phaseHelp.className = "helpDanger";
-          phaseHelp.textContent = "Double check phase selection (1Ø vs 3Ø).";
+          phaseHelp.className = isBad ? "helpDanger" : "helpWarn";
+          phaseHelp.textContent = isBad
+            ? "Double check phase selection (1Ø vs 3Ø)."
+            : "Unusual phase/voltage combination — double-check the system.";
         }
-      } else {
-        phaseEl.classList.remove("invalid");
       }
-    } else {
-      phaseEl.classList.remove("invalid");
     }
   }
 
@@ -683,10 +672,8 @@
     outVAMeta.textContent  = Number.isFinite(VA) ? "VA (kVA field auto-updates)" : "Provide FLA + V + phase OR enter VA/kVA OR kW+PF";
     outMCAMeta.textContent = Number.isFinite(MCA) ? "A (Factor × FLA)" : "Provide FLA + factor OR enter MCA";
 
-    // Solved-from 
     solveSourceEl.textContent = labelFor(lastEdited);
 
-    // Status line (no voltage reference anymore)
     const status = [];
     if (hasData(VA)) status.push("VA known");
     if (hasData(FLA)) status.push("FLA known");
@@ -762,9 +749,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
