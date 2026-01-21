@@ -47,12 +47,13 @@
           <div class="help">Affects VA ↔ FLA formula.</div>
           <div class="help" id="phaseHelp"></div>
         </div>
-
+        
         <div class="field">
-          <label>&nbsp;</label>
-          <button id="resetBtn">Reset</button>
-          <div class="help">Clears all values.</div>
+          <label for="factor">MCA Factor</label>
+          <input id="factor" type="number" step="0.01" value="1.25" />
+          <div class="help" id="factorHelp">Used for MCA ↔ FLA (MCA = Factor × FLA).</div>
         </div>
+        
       </div>
 
       <div class="grid">
@@ -98,9 +99,9 @@
 
       <div class="grid">
         <div class="field">
-          <label for="factor">MCA Factor</label>
-          <input id="factor" type="number" step="0.01" value="1.25" />
-          <div class="help" id="factorHelp">Used for MCA ↔ FLA (MCA = Factor × FLA).</div>
+          <label>&nbsp;</label>
+          <button id="resetBtn">Reset</button>
+          <div class="help">Clears all values.</div>
         </div>
       </div>
 
@@ -725,5 +726,6 @@
 </script>
 </body>
 </html>
+
 
 
