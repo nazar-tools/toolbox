@@ -350,7 +350,7 @@
       if (!nearAny(V, V1_typ, 0.03)) {
         return {
           level: "warn",
-          message: `1Ø at ${V}V is unusual. Common 1Ø values are 120, 208, 240, 277, 480. If this is a 3Ø system, confirm whether you meant line-to-line.`,
+          message: `1Ø at ${V}V is unusual. Common 1Ø values are 120, 208, 240, 277, 480.`,
           flagVoltage: true,
           flagPhase: false
         };
@@ -363,7 +363,7 @@
     if (nearAny(V, [120, 277], 0.03)) {
       return {
         level: "bad",
-        message: `Double-check. 3Ø with ${V}V looks like a line-to-neutral value. 3Ø voltage is assumed line-to-line (common: 208, 240, 480, 600).`,
+        message: `3Ø with ${V}V looks like a line-to-neutral value. 3Ø voltage is assumed line-to-line (common: 208, 240, 480, 600).`,
         flagVoltage: true,
         flagPhase: true
       };
@@ -749,3 +749,4 @@
 </script>
 </body>
 </html>
+
