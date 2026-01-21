@@ -76,7 +76,6 @@
     --diag-label: rgba(17,24,39,.65);
   }
 }
-}
 
 /* =======
    BASE
@@ -520,6 +519,7 @@ details.island[open] > summary{ margin-bottom:10px; }
   body{padding:18px;}
   .gridHome{grid-template-columns: 1fr;}
 }
+
 
 
 
