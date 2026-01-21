@@ -252,6 +252,8 @@
   </div>
 
 <script>
+  "use strict";
+  
   const el = (id) => document.getElementById(id);
 
   const voltageEl = el("voltage");
@@ -492,12 +494,13 @@
   }
 
   function applyValidation(state) {
-    const { V, VA, FLA, kW, PF, eff, factor } = state;
+    const { V, phase, VA, FLA, kW, PF, eff, factor } = state;
     const voltageHelp = el("voltageHelp");
     const phaseHelp = el("phaseHelp");
     
     // Reset all invalid flags
     voltageEl.classList.remove("invalid");
+    phaseEl.classList.remove("invalid");
     pfEl.classList.remove("invalid");
     effEl.classList.remove("invalid");
     factorEl.classList.remove("invalid");
@@ -759,6 +762,7 @@
 </script>
 </body>
 </html>
+
 
 
 
