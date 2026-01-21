@@ -33,8 +33,9 @@
       <div class="grid">
         <div class="field">
           <label for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" step="0.01" placeholder="e.g. 208" />
+          <input id="voltage" type="number" step="1" placeholder="e.g. 208" />
           <div class="help">Used with phase to compute VA/FLA. Can be solved if VA + FLA are known.</div>
+          <div class="help" id="voltageHelp"></div>
         </div>
 
         <div class="field">
@@ -44,6 +45,7 @@
             <option value="3" selected>3Ø</option>
           </select>
           <div class="help">Affects VA ↔ FLA formula.</div>
+          <div class="help" id="phaseHelp"></div>
         </div>
 
         <div class="field">
@@ -491,7 +493,9 @@
 
   function applyValidation(state) {
     const { V, VA, FLA, kW, PF, eff, factor } = state;
-
+    const voltageHelp = el("voltageHelp");
+    const phaseHelp = el("phaseHelp");
+    
     // Reset all invalid flags
     voltageEl.classList.remove("invalid");
     pfEl.classList.remove("invalid");
@@ -538,6 +542,36 @@
 
     if (needsV && !(Number.isFinite(V) && V > 0)) {
       voltageEl.classList.add("invalid");
+    }
+
+    // Reset voltage/phase help
+    if (voltageHelp) { voltageHelp.className = "help"; voltageHelp.textContent = ""; }
+    if (phaseHelp) { phaseHelp.className = "help"; phaseHelp.textContent = ""; }
+    
+    const pv = validatePhaseVoltage(V, phase);
+    if (pv.level !== "ok") {
+      if (pv.flagVoltage) {
+        voltageEl.classList.add("invalid");
+        if (voltageHelp) {
+          voltageHelp.className = "helpDanger";
+          voltageHelp.textContent = pv.message;
+        }
+      } else if (voltageHelp) {
+        voltageHelp.className = "help";
+        voltageHelp.textContent = pv.message;
+      }
+    
+      if (pv.flagPhase) {
+        phaseEl.classList.add("invalid");
+        if (phaseHelp) {
+          phaseHelp.className = "helpDanger";
+          phaseHelp.textContent = "Check phase selection (1Ø vs 3Ø).";
+        }
+      } else {
+        phaseEl.classList.remove("invalid");
+      }
+    } else {
+      phaseEl.classList.remove("invalid");
     }
   }
 
@@ -725,6 +759,7 @@
 </script>
 </body>
 </html>
+
 
 
 
