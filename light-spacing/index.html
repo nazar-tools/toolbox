@@ -330,7 +330,7 @@
 
     const lightsSvg = lightXs.map((x, idx) => `
       <g>
-        <circle cx="${x}" cy="${lineY}" r="12" fill="${LGT}"></circle>
+        <circle cx="${x}" cy="${lineY}" r="12" fill="${LGT}" stroke="${SEC}" stroke-width="2"></circle>
         <text x="${x}" y="${lineY + 35}" fill="${LBL}" font-size="13" text-anchor="middle">
           L${idx + 1}
         </text>
@@ -433,6 +433,7 @@
 </script>
 </body>
 </html>
+
 
 
 
