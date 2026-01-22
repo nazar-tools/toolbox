@@ -313,7 +313,8 @@
       return `<polygon points="${pts}" fill="${color}"></polygon>`;
     };
 
-    const dimLine = ({ x1, x2, y, color, label, value, labelY }) => {
+    const dimLine = ({ x1, x2, y, color, label, value, labelY, valueColor }) => {
+      const valFill = (valueColor ?? OK);
       return `
         <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"
           stroke="${color}" stroke-width="2"></line>
@@ -322,7 +323,7 @@
         <text x="${(x1 + x2) / 2}" y="${labelY ?? (y - 8)}"
           fill="${color}" font-size="13" text-anchor="middle">
           <tspan>${label}</tspan>
-          <tspan fill="${OK}">${value}</tspan>
+          <tspan fill="${valFill}">${value}</tspan>
         </text>
       `;
     };
@@ -432,6 +433,7 @@
 </script>
 </body>
 </html>
+
 
 
 
