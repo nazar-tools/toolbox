@@ -1,10 +1,10 @@
-/* ===================
-   THEME TOKENS
-=================== */
+/* =========================================================
+   THEME TOKENS (BROWSER-DRIVEN ONLY)
+   ========================================================= */
 
 :root{
-  /* Base (DARK MODE) */
-  --bg:#1f1f1f;
+  /* Base (DARK) */
+  --bg:#0b0c0f;
   --text:#f4f5f7;
   --muted:rgba(244,245,247,.78);
   --muted2:rgba(244,245,247,.62);
@@ -28,10 +28,6 @@
   --danger:#ff6b6b;
   --ok:#63e6be;
 
-  /* Warning (amber) */
-  --warn:#fbbf24;
-  --warnText:#fde68a;
-
   /* Inputs */
   --input-bg:rgba(0,0,0,.30);
   --input-border:rgba(255,255,255,.16);
@@ -41,14 +37,12 @@
   --tag-border:rgba(255,255,255,.14);
 
   /* Diagram tokens */
-   --diag-primary: #e5e7eb;   /* main dimension lines */
-   --diag-secondary: #9ca3af; /* baseline/walls/secondary */
-   --diag-light: #f9fafb;     /* light circles */
-   --diag-label: #cbd5e1;     /* labels */
-   --diag-ref: var(--muted);
+  --diag-primary: rgba(244,245,247,.85);
+  --diag-secondary: rgba(244,245,247,.35);
+  --diag-light: rgba(244,245,247,.92);
+  --diag-label: rgba(244,245,247,.70);
 }
 
-/* LIGHT THEME */
 @media (prefers-color-scheme: light){
   :root{
     --bg:#f7f7f8;
@@ -66,13 +60,8 @@
 
     --shadow:none;
 
-    /* Accents */
     --danger:#dc2626;
     --ok:#0f766e;
-
-    /* Warning (amber) */
-    --warn:#b45309;
-    --warnText:#92400e;
 
     --input-bg:rgba(255,255,255,.92);
     --input-border:rgba(17,24,39,.14);
@@ -80,16 +69,16 @@
     --tag-bg:rgba(17,24,39,.04);
     --tag-border:rgba(17,24,39,.12);
 
-    --diag-primary: #111827;
-    --diag-secondary: #6b7280;
-    --diag-light: #e5e7eb;
-    --diag-label: #374151;
+    --diag-primary: rgba(17,24,39,.85);
+    --diag-secondary: rgba(17,24,39,.35);
+    --diag-light: rgba(17,24,39,.10);
+    --diag-label: rgba(17,24,39,.65);
   }
 }
 
-/* =======
+/* =========================================================
    BASE
-======= */
+   ========================================================= */
 
 *{box-sizing:border-box}
 html{ overflow-y: scroll; }
@@ -110,9 +99,9 @@ body{
   gap:18px;
 }
 
-/* ======
+/* =========================================================
    NAVBAR
-====== */
+   ========================================================= */
 
 .nav{
   display:flex;
@@ -181,7 +170,9 @@ body{
   text-decoration:none;
 }
 
-/* ========== TYPOGRAPHY ============ */
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
 
 header{ padding:8px 2px; }
 
@@ -211,7 +202,9 @@ h2{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* ================ CARDS / FORMS ===================== */
+/* =========================================================
+   CARDS / FORMS
+   ========================================================= */
 
 .card{
   background:var(--surface-1);
@@ -228,10 +221,18 @@ h2{
   margin-top:12px;
 }
 
+/* NEW: simple 2-col grid helper (useful for big text areas) */
+.grid2{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+
 .field{display:flex; flex-direction:column; gap:6px;}
 label{font-size:12px; color:var(--muted);}
 
-input, select{
+input, select, textarea{
   border-radius:var(--radius2);
   border:1px solid var(--input-border);
   background:var(--input-bg);
@@ -241,12 +242,19 @@ input, select{
   font-size:14px;
 }
 
-input:focus, select:focus{
+input:focus, select:focus, textarea:focus{
   border-color: var(--border2);
   box-shadow: none;
 }
 
-/* Validation (ERROR) */
+/* NEW: textarea behavior */
+textarea{
+  min-height:180px;
+  resize:vertical;
+  line-height:1.35;
+}
+
+/* Validation */
 .invalid{
   border-color: var(--danger) !important;
 }
@@ -254,17 +262,8 @@ input:focus, select:focus{
   border-color: var(--danger) !important;
 }
 
-/* Validation (WARNING) */
-.warn{
-  border-color: var(--warn) !important;
-}
-.warn:focus{
-  border-color: var(--warn) !important;
-}
-
 .help{ font-size:12px; color:var(--muted2); line-height:1.35; }
 .helpDanger{ font-size:12px; color:var(--danger); line-height:1.35; }
-.helpWarn{ font-size:12px; color:var(--warnText); line-height:1.35; }
 
 hr{ border:0; border-top:1px solid var(--border); margin:16px 0 6px; }
 
@@ -388,7 +387,9 @@ button:hover{
   font-size:14px;
 }
 
-/* ============ HOME TILES ================ */
+/* =========================================================
+   HOME TILES
+   ========================================================= */
 
 .gridHome{
   display:grid;
@@ -464,7 +465,9 @@ button:hover{
   line-height:1.45;
 }
 
-/* ================== LIGHT SPACING DIAGRAM ====================== */
+/* =========================================================
+   LIGHT SPACING DIAGRAM
+   ========================================================= */
 
 .diagramWrap{
   margin-top:12px;
@@ -484,7 +487,9 @@ button:hover{
   display:block;
 }
 
-/* ========== CALC BADGES ========== */
+/* =========================================================
+   CALC BADGES
+   ========================================================= */
 
 .computedBadge{
   display:inline-block;
@@ -497,7 +502,9 @@ button:hover{
   margin-left:8px;
 }
 
-/* ================ COLLAPSIBLE ISLAND ======================= */
+/* =========================================================
+   COLLAPSIBLE ISLAND
+   ========================================================= */
 
 details.island{
   border:1px solid var(--border);
@@ -524,7 +531,9 @@ details.island > summary::after{
 details.island[open] > summary::after{ transform: rotate(180deg); }
 details.island[open] > summary{ margin-bottom:10px; }
 
-/* =============== RESPONSIVE =================== */
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
 @media (max-width: 900px){
   .gridHome{grid-template-columns: repeat(2, minmax(0, 1fr));}
@@ -532,11 +541,10 @@ details.island[open] > summary{ margin-bottom:10px; }
 @media (max-width: 740px){
   .resultGrid, .resultGrid3{grid-template-columns:1fr;}
   .grid{grid-template-columns:1fr;}
+  .grid2{grid-template-columns:1fr;} /* NEW: stack textareas */
   .nav{flex-direction:column; align-items:flex-start; gap:10px;}
 }
 @media(max-width: 600px){
   body{padding:18px;}
   .gridHome{grid-template-columns: 1fr;}
 }
-
-
