@@ -548,3 +548,28 @@ details.island[open] > summary{ margin-bottom:10px; }
   body{padding:18px;}
   .gridHome{grid-template-columns: 1fr;}
 }
+
+
+/* Checkbox row */
+.checkRow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  color:var(--text);
+  cursor:pointer;
+  min-height:42px;
+}
+
+.checkRow input{
+  margin:0;
+  width:16px;
+  height:16px;
+  accent-color: var(--ok);
+}
+
+/* Keep output action aligned under output textarea */
+.outputActions{
+  justify-content:flex-end;
+  margin-top:6px;
+}
