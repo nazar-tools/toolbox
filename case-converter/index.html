@@ -46,14 +46,12 @@
         </div>
 
         <div class="field">
-          <label for="trim">Whitespace</label>
-          <select id="trim">
-            <option value="none">Keep as-is</option>
-            <option value="trim">Trim ends</option>
-            <option value="collapse" selected>Collapse extra spaces</option>
-            <option value="lines">Trim each line</option>
-          </select>
-          <div class="help">Optional cleanup.</div>
+          <label>Whitespace</label>
+          <label class="checkRow" for="collapseSpaces">
+            <input id="collapseSpaces" type="checkbox" checked />
+            <span>Collapse extra spaces</span>
+          </label>
+          <div class="help">Keeps line breaks, but reduces repeated spaces/tabs.</div>
         </div>
 
         <div class="field"></div>
@@ -68,6 +66,9 @@
         <div class="field">
           <label for="outputText">Output</label>
           <textarea id="outputText" readonly placeholder="Converted text..."></textarea>
+          <div class="actions outputActions">
+            <button id="copyBtn" type="button">Copy output</button>
+          </div>
         </div>
       </div>
 
@@ -75,10 +76,6 @@
         <span class="pill"><strong>Chars:</strong> <span id="charCount">0</span></span>
         <span class="pill"><strong>Words:</strong> <span id="wordCount">0</span></span>
         <span class="pill"><strong>Lines:</strong> <span id="lineCount">0</span></span>
-      </div>
-
-      <div class="actions">
-        <button id="copyBtn" type="button">Copy output</button>
       </div>
     </section>
 
@@ -102,7 +99,7 @@
   const el = (id) => document.getElementById(id);
 
   const modeEl = el("mode");
-  const trimEl = el("trim");
+  const collapseSpacesEl = el("collapseSpaces");
   const inputEl = el("inputText");
   const outputEl = el("outputText");
 
@@ -110,35 +107,23 @@
   const wordCountEl = el("wordCount");
   const lineCountEl = el("lineCount");
 
-  function normalizeWhitespace(s, mode) {
+  function normalizeWhitespace(s, shouldCollapse) {
     if (!s) return "";
-    if (mode === "trim") return s.trim();
-    if (mode === "collapse") {
-      // Collapse runs of spaces/tabs, keep newlines.
-      return s
-        .split("\n")
-        .map(line => line.replace(/[ \t]+/g, " ").trimEnd())
-        .join("\n")
-        .trim();
-    }
-    if (mode === "lines") {
-      return s
-        .split("\n")
-        .map(line => line.trim())
-        .join("\n")
-        .trim();
-    }
-    return s;
+    if (!shouldCollapse) return s;
+
+    return s
+      .split("\n")
+      .map(line => line.replace(/[ \t]+/g, " ").trimEnd())
+      .join("\n")
+      .trim();
   }
 
   function toTitleCase(s) {
-    // Simple title case: capitalize first letter of each word, lower the rest.
     return s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
   }
 
   function toSentenceCase(s) {
     const lower = s.toLowerCase();
-    // Capitalize first non-space char and first letter after . ! ?
     return lower.replace(/(^\s*[a-z])|([.!?]\s+([a-z]))/g, (m, a, b, c) => {
       if (a) return a.toUpperCase();
       if (c) return b.replace(c, c.toUpperCase());
@@ -157,8 +142,7 @@
   }
 
   function slugTokens(s) {
-    // Normalize to "words" and numbers, treat everything else as separators.
-    return normalizeWhitespace(s, "collapse")
+    return normalizeWhitespace(s, true)
       .toLowerCase()
       .replace(/['"]/g, "")
       .replace(/[^a-z0-9]+/g, " ")
@@ -193,7 +177,7 @@
     const raw = inputEl.value || "";
     updateCounts(raw);
 
-    const cleaned = normalizeWhitespace(raw, trimEl.value);
+    const cleaned = normalizeWhitespace(raw, collapseSpacesEl.checked);
     outputEl.value = convert(cleaned, modeEl.value);
   }
 
@@ -213,7 +197,7 @@
 
   inputEl.addEventListener("input", render);
   modeEl.addEventListener("change", render);
-  trimEl.addEventListener("change", render);
+  collapseSpacesEl.addEventListener("change", render);
 
   window.addEventListener("DOMContentLoaded", () => {
     render();
