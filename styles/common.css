@@ -118,7 +118,7 @@ body{
 
 .navlinks{
   display:flex;
-  gap:14px;
+  gap:10px;
   flex-wrap:wrap;
   align-items:center;
 }
@@ -132,14 +132,15 @@ body{
   display:inline-flex;
   align-items:center;
   gap:6px;
-  line-height:1;
-  padding:6px 2px;
+  padding:8px 10px;
+  border-radius:12px;
+  cursor:pointer;
   color:var(--text);
   font-weight:650;
   font-size:14px;
-  opacity:.82;
-  cursor:pointer;
+  opacity:.86;
   user-select:none;
+  transition:background .12s ease, opacity .12s ease;
 }
 
 .navMenu summary::-webkit-details-marker{
@@ -148,34 +149,32 @@ body{
 
 .navMenu summary::after{
   content:"▾";
-  font-size:10px;
+  font-size:12px;
   opacity:.75;
   transition:transform .15s ease;
-}
-
-.navMenu[open] summary{
-  opacity:1;
 }
 
 .navMenu[open] summary::after{
   transform:rotate(180deg);
 }
 
-.navMenu summary:hover{
+.navMenu summary:hover,
+.navMenu summary:focus-visible{
   opacity:1;
+  background:var(--surface-hover);
+  outline:none;
 }
 
 .navDropdown{
   position:absolute;
-  top:calc(100% + 10px);
+  top:calc(100% + 8px);
   right:0;
   min-width:220px;
   display:flex;
   flex-direction:column;
-  gap:2px;
-  padding:10px;
+  padding:8px;
   border:1px solid var(--border);
-  border-radius:16px;
+  border-radius:14px;
   background:var(--surface-1);
   box-shadow:var(--shadow);
   z-index:1000;
@@ -186,35 +185,36 @@ body{
   align-items:center;
   color:var(--text);
   text-decoration:none;
-  font-weight:650;
+  font-weight:600;
   font-size:14px;
-  line-height:1;
-  padding:12px 10px;
-  border-radius:12px;
-  opacity:.82;
-  position:relative;
+  padding:10px 12px;
+  border-radius:10px;
+  opacity:.9;
+  transition:background .12s ease, opacity .12s ease;
 }
 
-.navDropdown a:hover{
+.navDropdown a:hover,
+.navDropdown a:focus-visible{
+  background:var(--surface-2);
   opacity:1;
-  text-decoration:none;
-  background:var(--surface-hover);
+  outline:none;
 }
 
 .navDropdown a[aria-current="page"]{
+  background:var(--surface-2);
   opacity:1;
+  position:relative;
 }
 
-.navDropdown a[aria-current="page"]::after{
+.navDropdown a[aria-current="page"]::before{
   content:"";
   position:absolute;
-  left:10px;
-  bottom:8px;
-  width:calc(100% - 20px);
-  height:2px;
+  left:0;
+  top:10px;
+  bottom:10px;
+  width:3px;
   border-radius:999px;
   background:var(--ok);
-  opacity:.9;
 }
 
 .disabledLink{
